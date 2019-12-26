@@ -5,6 +5,7 @@ cd $PANE_PATH
 
 git_changes() {
   local changes=$(git diff --shortstat | sed 's/^[^0-9]*\([0-9]*\)[^0-9]*\([0-9]*\)[^0-9]*\([0-9]*\)[^0-9]*/\1;\2;\3/')
+  local untracked=$(fish -c git_untracked_files)
   local changes_array=(${changes//;/ })
   local result=()
 
@@ -18,6 +19,10 @@ git_changes() {
 
   if [[ -n ${changes_array[2]} ]]; then
     result+=("-${changes_array[2]}")
+  fi
+
+  if [[ ${untracked} -gt 0 ]]; then
+    result+=("?${untracked}")
   fi
 
   local joined=$(printf " %s" "${result[@]}")
