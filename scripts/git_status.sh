@@ -5,7 +5,8 @@ cd $PANE_PATH
 
 git_changes() {
   local changes=$(git diff --shortstat | sed 's/^[^0-9]*\([0-9]*\)[^0-9]*\([0-9]*\)[^0-9]*\([0-9]*\)[^0-9]*/\1;\2;\3/')
-  local untracked=$(fish -c git_untracked_files)
+  local untracked=$(git ls-files --others --exclude-standard $(git rev-parse --show-toplevel) | command awk '
+        BEGIN { n = 0 } { n++ } END { print n } ')
   local changes_array=(${changes//;/ })
   local result=()
 
